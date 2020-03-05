@@ -1,5 +1,5 @@
 # Device Provisioning Services
-    
+
 > see https://aka.ms/autorest
 
 This is the AutoRest configuration file for Device Provisioning Services.
@@ -7,7 +7,7 @@ This is the AutoRest configuration file for Device Provisioning Services.
 
 
 ---
-## Getting Started 
+## Getting Started
 To build the SDK for DeviceProvisioningServices, simply [Install AutoRest](https://aka.ms/autorest/install) and in this folder, run:
 
 > `autorest`
@@ -19,12 +19,12 @@ To see additional help and options, run:
 
 ## Configuration
 
-### Basic Information 
+### Basic Information
 These are the global settings for the API.
 
 ``` yaml
 openapi-type: arm
-tag: package-2017-11
+tag: package-2018-01
 ```
 
 ### Tag: package-2017-08
@@ -45,6 +45,15 @@ input-file:
 - Microsoft.Devices/stable/2017-11-15/iotdps.json
 ```
 
+### Tag: package-2018-01
+
+These settings apply only when `--tag=package-2018-01` is specified on the command line.
+
+``` yaml $(tag) == 'package-2018-01'
+input-file:
+- Microsoft.Devices/stable/2018-01-22/iotdps.json
+```
+
 ---
 # Code Generation
 
@@ -56,13 +65,16 @@ This is not used by Autorest itself.
 
 ``` yaml $(swagger-to-sdk)
 swagger-to-sdk:
+  - repo: azure-sdk-for-net
   - repo: azure-sdk-for-python
-  - repo: azure-libraries-for-java
+  - repo: azure-sdk-for-java
   - repo: azure-sdk-for-go
+  - repo: azure-sdk-for-js
+  - repo: azure-sdk-for-node
 ```
 
 
-## C# 
+## C#
 
 These settings apply only when `--csharp` is specified on the command line.
 Please also specify `--csharp-sdks-folder=<path to "SDKs" directory of your azure-sdk-for-net clone>`.
@@ -72,7 +84,7 @@ csharp:
   azure-arm: true
   license-header: MICROSOFT_MIT_NO_VERSION
   namespace: Microsoft.Azure.Management.DeviceProvisioningServices
-  output-folder: $(csharp-sdks-folder)/DeviceProvisioningServices/Management.DeviceProvisioningServices/Generated
+  output-folder: $(csharp-sdks-folder)/deviceprovisioningservices/Microsoft.Azure.Management.DeviceProvisioningServices/src/Generated
   clear-output-folder: true
 ```
 
@@ -95,50 +107,17 @@ python:
 ``` yaml $(python) && $(python-mode) == 'update'
 python:
   no-namespace-folders: true
-  output-folder: $(python-sdks-folder)/azure-mgmt-iothubprovisioningservices/azure/mgmt/iothubprovisioningservices
+  output-folder: $(python-sdks-folder)/iothub/azure-mgmt-iothubprovisioningservices/azure/mgmt/iothubprovisioningservices
 ```
 ``` yaml $(python) && $(python-mode) == 'create'
 python:
   basic-setup-py: true
-  output-folder: $(python-sdks-folder)/azure-mgmt-iothubprovisioningservices
+  output-folder: $(python-sdks-folder)/iothub/azure-mgmt-iothubprovisioningservices
 ```
 
 ## Go
 
-These settings apply only when `--go` is specified on the command line.
-
-``` yaml $(go)
-go:
-  license-header: MICROSOFT_APACHE_NO_VERSION
-  clear-output-folder: true
-  namespace: iothub
-```
-
-### Go multi-api
-
-``` yaml $(go) && $(multiapi)
-batch:
-  - tag: package-2017-11
-  - tag: package-2017-08
-```
-
-### Tag: package-2017-11 and go
-
-These settings apply only when `--tag=package-2017-11 --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
-
-``` yaml $(tag)=='package-2017-11' && $(go)
-output-folder: $(go-sdk-folder)/services/provisioningservices/mgmt/2017-11-15/iothub
-```
-
-### Tag: package-2017-08 and go
-
-These settings apply only when `--tag=package-2017-11 --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
-
-``` yaml $(tag)=='package-2017-08' && $(go)
-output-folder: $(go-sdk-folder)/services/provisioningservices/mgmt/2017-08-21-preview/iothub
-```
+See configuration in [readme.go.md](./readme.go.md)
 
 ## Java
 
@@ -146,11 +125,87 @@ These settings apply only when `--java` is specified on the command line.
 Please also specify `--azure-libraries-for-java-folder=<path to the root directory of your azure-libraries-for-java clone>`.
 
 ``` yaml $(java)
-java:
-  azure-arm: true
-  fluent: true
-  namespace: com.microsoft.azure.management.provisioningservices
-  license-header: MICROSOFT_MIT_NO_CODEGEN
-  payload-flattening-threshold: 1
-  output-folder: $(azure-libraries-for-java-folder)/azure-mgmt-provisioningservices
+azure-arm: true
+fluent: true
+namespace: com.microsoft.azure.management.provisioningservices
+license-header: MICROSOFT_MIT_NO_CODEGEN
+payload-flattening-threshold: 1
+output-folder: $(azure-libraries-for-java-folder)/azure-mgmt-provisioningservices
 ```
+
+### Java multi-api
+
+``` yaml $(java) && $(multiapi)
+batch:
+  - tag: package-2017-08
+  - tag: package-2017-11
+  - tag: package-2018-01
+```
+
+### Tag: package-2017-08 and java
+
+These settings apply only when `--tag=package-2017-08 --java` is specified on the command line.
+Please also specify `--azure-libraries-for-java=<path to the root directory of your azure-sdk-for-java clone>`.
+
+``` yaml $(tag) == 'package-2017-08' && $(java) && $(multiapi)
+java:
+  namespace: com.microsoft.azure.management.deviceprovisioningservices.v2017_08_21_preview
+  output-folder: $(azure-libraries-for-java-folder)/sdk/deviceprovisioningservices/mgmt-v2017_08_21_preview
+regenerate-manager: true
+generate-interface: true
+```
+
+### Tag: package-2017-11 and java
+
+These settings apply only when `--tag=package-2017-11 --java` is specified on the command line.
+Please also specify `--azure-libraries-for-java=<path to the root directory of your azure-sdk-for-java clone>`.
+
+``` yaml $(tag) == 'package-2017-11' && $(java) && $(multiapi)
+java:
+  namespace: com.microsoft.azure.management.deviceprovisioningservices.v2017_11_15
+  output-folder: $(azure-libraries-for-java-folder)/sdk/deviceprovisioningservices/mgmt-v2017_11_15
+regenerate-manager: true
+generate-interface: true
+```
+
+### Tag: package-2018-01 and java
+
+These settings apply only when `--tag=package-2018-01 --java` is specified on the command line.
+Please also specify `--azure-libraries-for-java=<path to the root directory of your azure-sdk-for-java clone>`.
+
+``` yaml $(tag) == 'package-2018-01' && $(java) && $(multiapi)
+java:
+  namespace: com.microsoft.azure.management.deviceprovisioningservices.v2018_01_22
+  output-folder: $(azure-libraries-for-java-folder)/sdk/deviceprovisioningservices/mgmt-v2018_01_22
+regenerate-manager: true
+generate-interface: true
+```
+
+
+
+## Multi-API/Profile support for AutoRest v3 generators 
+
+AutoRest V3 generators require the use of `--tag=all-api-versions` to select api files.
+
+This block is updated by an automatic script. Edits may be lost!
+
+``` yaml $(tag) == 'all-api-versions' /* autogenerated */
+# include the azure profile definitions from the standard location
+require: $(this-folder)/../../../profiles/readme.md
+
+# all the input files across all versions
+input-file:
+  - $(this-folder)/Microsoft.Devices/preview/2017-08-21-preview/iotdps.json
+  - $(this-folder)/Microsoft.Devices/stable/2017-11-15/iotdps.json
+  - $(this-folder)/Microsoft.Devices/stable/2018-01-22/iotdps.json
+
+```
+
+If there are files that should not be in the `all-api-versions` set, 
+uncomment the  `exclude-file` section below and add the file paths.
+
+``` yaml $(tag) == 'all-api-versions'
+#exclude-file: 
+#  - $(this-folder)/Microsoft.Example/stable/2010-01-01/somefile.json
+```
+

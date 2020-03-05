@@ -1,5 +1,5 @@
 # TrafficManager
-    
+
 > see https://aka.ms/autorest
 
 This is the AutoRest configuration file for TrafficManager.
@@ -7,7 +7,7 @@ This is the AutoRest configuration file for TrafficManager.
 
 
 ---
-## Getting Started 
+## Getting Started
 To build the SDK for TrafficManager, simply [Install AutoRest](https://aka.ms/autorest/install) and in this folder, run:
 
 > `autorest`
@@ -20,14 +20,94 @@ To see additional help and options, run:
 ## Configuration
 
 
-### Basic Information 
+### Basic Information
 These are the global settings for the TrafficManager API.
 
 ``` yaml
 openapi-type: arm
-tag: package-2017-09-preview
+tag: package-2018-04
 ```
 
+## Suppression
+``` yaml
+directive:
+  - suppress: OperationsAPIImplementation
+    reason: We do have a operations api as "/providers/Microsoft.Network/operations"
+    from: trafficmanager.json
+    where: $.paths
+  - suppress: RequiredPropertiesMissingInResourceModel
+    reason: This will cause breaking changes in .NET SDK
+    from: trafficmanager.json
+    where: $.definitions.HeatMapModel
+  - suppress: RequiredPropertiesMissingInResourceModel
+    reason: This will cause breaking changes in .NET SDK
+    from: trafficmanager.json
+    where: $.definitions.TrafficManagerGeographicHierarchy
+  - suppress: RequiredPropertiesMissingInResourceModel
+    reason: This will cause breaking changes in .NET SDK
+    from: trafficmanager.json
+    where: $.definitions.Profile
+  - suppress: RequiredPropertiesMissingInResourceModel
+    reason: This will cause breaking changes in .NET SDK
+    from: trafficmanager.json
+    where: $.definitions.Endpoint
+  - suppress: RequiredPropertiesMissingInResourceModel
+    reason: This will cause breaking changes in .NET SDK
+    from: trafficmanager.json
+    where: $.definitions.UserMetricsModel
+```
+
+### Tag: package-2018-04
+
+These settings apply only when `--tag=package-2018-04` is specified on the command line.
+
+``` yaml $(tag) == 'package-2018-04'
+input-file:
+- Microsoft.Network/stable/2018-04-01/trafficmanager.json
+```
+
+### Tag: package-2018-03
+
+These settings apply only when `--tag=package-2018-03` is specified on the command line.
+
+``` yaml $(tag) == 'package-2018-03'
+input-file:
+- Microsoft.Network/stable/2018-03-01/trafficmanager.json
+```
+
+### Tag: package-2018-02
+
+These settings apply only when `--tag=package-2018-02` is specified on the command line.
+
+``` yaml $(tag) == 'package-2018-02'
+input-file:
+- Microsoft.Network/stable/2018-02-01/trafficmanager.json
+- Microsoft.Network/preview/2017-09-01-preview/trafficmanageranalytics.json
+
+# Needed when there is more than one input file
+override-info:
+  title: TrafficManagerManagementClient
+
+directive:
+  - suppress: R3023
+    reason: it's implemented in the main network spec
+    approved-by: "@fearthecowboy"
+
+  - where: $.paths["/providers/Microsoft.Network/checkTrafficManagerNameAvailability"].post.operationId
+    suppress: R2066
+    reason: the name does include it.
+    approved-by: "@fearthecowboy"
+
+  - suppress: R3018
+    reason: Existing API; can't change.
+    approved-by: "@fearthecowboy"
+
+  - where: $.definitions.TrafficManagerUserMetricsKeyModel.properties
+    suppress: R3006
+    reason: Existing API; can't change without breaking API. Will consider in future API version
+    approved-by: "@fearthecowboy"
+
+```
 ### Tag: package-2017-09-preview
 
 These settings apply only when `--tag=package-2017-09-preview` is specified on the command line.
@@ -40,6 +120,15 @@ input-file:
 # Needed when there is more than one input file
 override-info:
   title: TrafficManagerManagementClient
+```
+
+### Tag: package-2017-09-preview-only
+
+These settings apply only when `--tag=package-2017-09-preview-only` is specified on the command line.
+
+``` yaml $(tag) == 'package-2017-09-preview-only'
+input-file:
+- Microsoft.Network/preview/2017-09-01-preview/trafficmanageranalytics.json
 ```
 
 
@@ -61,7 +150,7 @@ These settings apply only when `--tag=package-2017-03` is specified on the comma
 input-file:
 - Microsoft.Network/stable/2017-03-01/trafficmanager.json
 ```
- 
+
 ### Tag: package-2015-11
 
 These settings apply only when `--tag=package-2015-11` is specified on the command line.
@@ -83,13 +172,19 @@ This is not used by Autorest itself.
 
 ``` yaml $(swagger-to-sdk)
 swagger-to-sdk:
+  - repo: azure-sdk-for-net
   - repo: azure-sdk-for-python
   - repo: azure-libraries-for-java
   - repo: azure-sdk-for-go
+  - repo: azure-sdk-for-node
+  - repo: azure-sdk-for-js
+  - repo: azure-sdk-for-ruby
+    after_scripts:
+      - bundle install && rake arm:regen_all_profiles['azure_mgmt_traffic_manager']
 ```
 
 
-## C# 
+## C#
 
 These settings apply only when `--csharp` is specified on the command line.
 Please also specify `--csharp-sdks-folder=<path to "SDKs" directory of your azure-sdk-for-net clone>`.
@@ -101,7 +196,7 @@ csharp:
   license-header: MICROSOFT_MIT_NO_VERSION
   namespace: Microsoft.Azure.Management.TrafficManager
   payload-flattening-threshold: 2
-  output-folder: $(csharp-sdks-folder)/TrafficManager/Management.TrafficManager/Generated
+  output-folder: $(csharp-sdks-folder)/trafficmanager/Microsoft.Azure.Management.TrafficManager/src/Generated
   clear-output-folder: true
 ```
 
@@ -124,73 +219,17 @@ python:
 ``` yaml $(python) && $(python-mode) == 'update'
 python:
   no-namespace-folders: true
-  output-folder: $(python-sdks-folder)/azure-mgmt-trafficmanager/azure/mgmt/trafficmanager
+  output-folder: $(python-sdks-folder)/trafficmanager/azure-mgmt-trafficmanager/azure/mgmt/trafficmanager
 ```
 ``` yaml $(python) && $(python-mode) == 'create'
 python:
   basic-setup-py: true
-  output-folder: $(python-sdks-folder)/azure-mgmt-trafficmanager
+  output-folder: $(python-sdks-folder)/trafficmanager/azure-mgmt-trafficmanager
 ```
-
-
 
 ## Go
 
-These settings apply only when `--go` is specified on the command line.
-
-``` yaml $(go)
-go:
-  license-header: MICROSOFT_APACHE_NO_VERSION
-  namespace: trafficmanager
-  clear-output-folder: true
-```
-
-### Go multi-api
-
-``` yaml $(go) && $(multiapi)
-batch:
-  - tag: package-2017-09-preview
-  - tag: package-2017-05
-  - tag: package-2017-03
-  - tag: package-2015-11
-```
-
-### Tag: package-2017-09-preview and go
-
-These settings apply only when `--tag=package-2017-09-preview --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
-
-``` yaml $(tag) == 'package-2017-09-preview' && $(go)
-output-folder: $(go-sdk-folder)/services/trafficmanager/mgmt/2017-09-01-preview/trafficmanager
-```
-
-### Tag: package-2017-05 and go
-
-These settings apply only when `--tag=package-2017-05 --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
-
-``` yaml $(tag) == 'package-2017-05' && $(go)
-output-folder: $(go-sdk-folder)/services/trafficmanager/mgmt/2017-05-01/trafficmanager
-```
-
-### Tag: package-2017-03 and go
-
-These settings apply only when `--tag=package-2017-03 --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
-
-``` yaml $(tag) == 'package-2017-03' && $(go)
-output-folder: $(go-sdk-folder)/services/trafficmanager/mgmt/2017-03-01/trafficmanager
-```
-
-### Tag: package-2015-11 and go
-
-These settings apply only when `--tag=package-2015-11 --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
-
-``` yaml $(tag) == 'package-2015-11' && $(go)
-output-folder: $(go-sdk-folder)/services/trafficmanager/mgmt/2015-11-01/trafficmanager
-```
-
+See configuration in [readme.go.md](./readme.go.md)
 
 ## Java
 
@@ -206,3 +245,34 @@ java:
   payload-flattening-threshold: 1
   output-folder: $(azure-libraries-for-java-folder)/azure-mgmt-trafficmanager
 ```
+
+## Multi-API/Profile support for AutoRest v3 generators 
+
+AutoRest V3 generators require the use of `--tag=all-api-versions` to select api files.
+
+This block is updated by an automatic script. Edits may be lost!
+
+``` yaml $(tag) == 'all-api-versions' /* autogenerated */
+# include the azure profile definitions from the standard location
+require: $(this-folder)/../../../profiles/readme.md
+
+# all the input files across all versions
+input-file:
+  - $(this-folder)/Microsoft.Network/stable/2018-04-01/trafficmanager.json
+  - $(this-folder)/Microsoft.Network/stable/2018-03-01/trafficmanager.json
+  - $(this-folder)/Microsoft.Network/stable/2018-02-01/trafficmanager.json
+  - $(this-folder)/Microsoft.Network/preview/2017-09-01-preview/trafficmanageranalytics.json
+  - $(this-folder)/Microsoft.Network/stable/2017-05-01/trafficmanager.json
+  - $(this-folder)/Microsoft.Network/stable/2017-03-01/trafficmanager.json
+  - $(this-folder)/Microsoft.Network/stable/2015-11-01/trafficmanager.json
+
+```
+
+If there are files that should not be in the `all-api-versions` set, 
+uncomment the  `exclude-file` section below and add the file paths.
+
+``` yaml $(tag) == 'all-api-versions'
+#exclude-file: 
+#  - $(this-folder)/Microsoft.Example/stable/2010-01-01/somefile.json
+```
+

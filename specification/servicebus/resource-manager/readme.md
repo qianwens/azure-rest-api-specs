@@ -1,5 +1,5 @@
 # ServiceBus
-    
+
 > see https://aka.ms/autorest
 
 This is the AutoRest configuration file for ServiceBus.
@@ -7,7 +7,7 @@ This is the AutoRest configuration file for ServiceBus.
 
 
 ---
-## Getting Started 
+## Getting Started
 To build the SDK for ServiceBus, simply [Install AutoRest](https://aka.ms/autorest/install) and in this folder, run:
 
 > `autorest`
@@ -21,7 +21,7 @@ To see additional help and options, run:
 
 
 
-### Basic Information 
+### Basic Information
 These are the global settings for the ServiceBus API.
 
 ``` yaml
@@ -29,6 +29,14 @@ openapi-type: arm
 tag: package-2017-04
 ```
 
+### Tag: package-2018-01-preview
+
+These settings apply only when `--tag=package-2018-01-preview` is specified on the command line.
+
+``` yaml $(tag) == 'package-2018-01-preview'
+input-file:
+- Microsoft.ServiceBus/preview/2018-01-01-preview/servicebus-preview.json
+```
 
 ### Tag: package-2017-04
 
@@ -42,7 +50,7 @@ input-file:
 
 Important notes:
 On the advice of @fearthecowboy, the  `EncodingCaptureDescription` enum previously contained two values [`Avro`,`AvroDeflate`] ; the service has been changed (on 2018-01-17) and will not ever return the `AvroDeflate` value,
- however, we have left the value in the enum (in servicebus.json) so that existing clients won't suffer a binary breaking change 
+ however, we have left the value in the enum (in servicebus.json) so that existing clients won't suffer a binary breaking change
 The `AvroDeflate` value will likely be removed in a future API version, and at that a breaking binary change may happen.
 
 ### Tag: package-2015-08
@@ -53,7 +61,6 @@ These settings apply only when `--tag=package-2015-08` is specified on the comma
 input-file:
 - Microsoft.ServiceBus/stable/2015-08-01/servicebus.json
 ```
-
 
 ---
 # Code Generation
@@ -66,13 +73,19 @@ This is not used by Autorest itself.
 
 ``` yaml $(swagger-to-sdk)
 swagger-to-sdk:
+  - repo: azure-sdk-for-net
   - repo: azure-sdk-for-python
-  - repo: azure-libraries-for-java
+  - repo: azure-sdk-for-java
   - repo: azure-sdk-for-go
+  - repo: azure-sdk-for-js
+  - repo: azure-sdk-for-node
+  - repo: azure-sdk-for-ruby
+    after_scripts:
+      - bundle install && rake arm:regen_all_profiles['azure_mgmt_service_bus']
 ```
 
 
-## C# 
+## C#
 
 These settings apply only when `--csharp` is specified on the command line.
 Please also specify `--csharp-sdks-folder=<path to "SDKs" directory of your azure-sdk-for-net clone>`.
@@ -82,7 +95,7 @@ csharp:
   azure-arm: true
   license-header: MICROSOFT_MIT_NO_VERSION
   namespace: Microsoft.Azure.Management.ServiceBus
-  output-folder: $(csharp-sdks-folder)/ServiceBus/Management.ServiceBus/Generated
+  output-folder: $(csharp-sdks-folder)/servicebus/Microsoft.Azure.Management.ServiceBus/src/Generated
   clear-output-folder: true
 ```
 
@@ -100,70 +113,51 @@ python:
   payload-flattening-threshold: 2
   namespace: azure.mgmt.servicebus
   package-name: azure-mgmt-servicebus
+  package-version: 0.5.0
   clear-output-folder: true
 ```
 ``` yaml $(python) && $(python-mode) == 'update'
 python:
   no-namespace-folders: true
-  output-folder: $(python-sdks-folder)/azure-mgmt-servicebus/azure/mgmt/servicebus
+  output-folder: $(python-sdks-folder)/servicebus/azure-mgmt-servicebus/azure/mgmt/servicebus
 ```
 ``` yaml $(python) && $(python-mode) == 'create'
 python:
   basic-setup-py: true
-  output-folder: $(python-sdks-folder)/azure-mgmt-servicebus
+  output-folder: $(python-sdks-folder)/servicebus/azure-mgmt-servicebus
 ```
-
-
 
 ## Go
 
-These settings apply only when `--go` is specified on the command line.
-
-``` yaml $(go)
-go:
-  license-header: MICROSOFT_APACHE_NO_VERSION
-  namespace: servicebus
-  clear-output-folder: true
-```
-
-### Go multi-api
-
-``` yaml $(go) && $(multiapi)
-batch:
-  - tag: package-2017-04
-  - tag: package-2015-08
-```
-
-### Tag: package-2017-04 and go
-
-These settings apply only when `--tag=package-2017-04 --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
-
-``` yaml $(tag) == 'package-2017-04' && $(go)
-output-folder: $(go-sdk-folder)/services/servicebus/mgmt/2017-04-01/servicebus
-```
-
-### Tag: package-2015-08 and go
-
-These settings apply only when `--tag=package-2015-08 --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
-
-``` yaml $(tag) == 'package-2015-08' && $(go)
-output-folder: $(go-sdk-folder)/services/servicebus/mgmt/2015-08-01/servicebus
-```
-
+See configuration in [readme.go.md](./readme.go.md)
 
 ## Java
 
-These settings apply only when `--java` is specified on the command line.
-Please also specify `--azure-libraries-for-java-folder=<path to the root directory of your azure-libraries-for-java clone>`.
+See configuration in [readme.java.md](./readme.java.md)
 
-``` yaml $(java)
-java:
-  azure-arm: true
-  fluent: true
-  namespace: com.microsoft.azure.management.servicebus
-  license-header: MICROSOFT_MIT_NO_CODEGEN
-  payload-flattening-threshold: 1
-  output-folder: $(azure-libraries-for-java-folder)/azure-mgmt-servicebus
+## Multi-API/Profile support for AutoRest v3 generators 
+
+AutoRest V3 generators require the use of `--tag=all-api-versions` to select api files.
+
+This block is updated by an automatic script. Edits may be lost!
+
+``` yaml $(tag) == 'all-api-versions' /* autogenerated */
+# include the azure profile definitions from the standard location
+require: $(this-folder)/../../../profiles/readme.md
+
+# all the input files across all versions
+input-file:
+  - $(this-folder)/Microsoft.ServiceBus/preview/2018-01-01-preview/servicebus-preview.json
+  - $(this-folder)/Microsoft.ServiceBus/stable/2017-04-01/servicebus.json
+  - $(this-folder)/Microsoft.ServiceBus/stable/2015-08-01/servicebus.json
+
 ```
+
+If there are files that should not be in the `all-api-versions` set, 
+uncomment the  `exclude-file` section below and add the file paths.
+
+``` yaml $(tag) == 'all-api-versions'
+#exclude-file: 
+#  - $(this-folder)/Microsoft.Example/stable/2010-01-01/somefile.json
+```
+

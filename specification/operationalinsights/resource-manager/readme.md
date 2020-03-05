@@ -1,5 +1,5 @@
 # OperationalInsights
-    
+
 > see https://aka.ms/autorest
 
 This is the AutoRest configuration file for OperationalInsights.
@@ -7,7 +7,7 @@ This is the AutoRest configuration file for OperationalInsights.
 
 
 ---
-## Getting Started 
+## Getting Started
 To build the SDK for OperationalInsights, simply [Install AutoRest](https://aka.ms/autorest/install) and in this folder, run:
 
 > `autorest`
@@ -21,7 +21,7 @@ To see additional help and options, run:
 
 
 
-### Basic Information 
+### Basic Information
 These are the global settings for the OperationalInsights API.
 
 ``` yaml
@@ -40,7 +40,7 @@ These settings apply only when `--tag=package-2015-11-preview` is specified on t
 input-file:
 - Microsoft.OperationalInsights/preview/2015-11-01-preview/OperationalInsights.json
 ```
- 
+
 ### Tag: package-2015-03
 
 These settings apply only when `--tag=package-2015-03` is specified on the command line.
@@ -48,6 +48,16 @@ These settings apply only when `--tag=package-2015-03` is specified on the comma
 ``` yaml $(tag) == 'package-2015-03'
 input-file:
 - Microsoft.OperationalInsights/stable/2015-03-20/OperationalInsights.json
+```
+
+### Tag: package-2019-08-preview
+
+These settings apply only when `--tag=package-2019-08-preview` is specified on the command line.
+
+``` yaml $(tag) == 'package-2019-08-preview'
+input-file:
+- Microsoft.OperationalInsights/preview/2019-08-01-preview/Clusters.json
+- Microsoft.OperationalInsights/preview/2019-08-01-preview/OperationalInsights.json
 ```
 
 ---
@@ -61,7 +71,14 @@ This is not used by Autorest itself.
 
 ``` yaml $(swagger-to-sdk)
 swagger-to-sdk:
+  - repo: azure-sdk-for-net
   - repo: azure-sdk-for-go
+  - repo: azure-sdk-for-python
+  - repo: azure-sdk-for-js
+  - repo: azure-sdk-for-node
+  - repo: azure-sdk-for-ruby
+    after_scripts:
+      - bundle install && rake arm:regen_all_profiles['azure_mgmt_operational_insights']
 ```
 
 
@@ -72,12 +89,12 @@ Please also specify `--csharp-sdks-folder=<path to "SDKs" directory of your azur
 
 ```yaml $(csharp)
 csharp:
-  # last generated using AutoRest.1.0.0-Nightly20170126 
+  # last generated using AutoRest.1.0.0-Nightly20170126
   azure-arm: true
   namespace: Microsoft.Azure.Management.OperationalInsights
   payload-flattening-threshold: 1
   license-header: MICROSOFT_MIT_NO_VERSION
-  output-folder: $(csharp-sdks-folder)/OperationalInsights/Management/Management.OperationalInsights/Generated
+  output-folder: $(csharp-sdks-folder)/operationalinsights/Microsoft.Azure.Management.OperationalInsights/src/Generated
   clear-output-folder: true
 ```
 
@@ -102,66 +119,21 @@ python:
 ``` yaml $(python) && $(python-mode) == 'update'
 python:
   no-namespace-folders: true
-  output-folder: $(python-sdks-folder)/azure-mgmt-loganalytics/azure/mgmt/loganalytics
+  output-folder: $(python-sdks-folder)/loganalytics/azure-mgmt-loganalytics/azure/mgmt/loganalytics
 ```
 ``` yaml $(python) && $(python-mode) == 'create'
 python:
   basic-setup-py: true
-  output-folder: $(python-sdks-folder)/azure-mgmt-loganalytics
+  output-folder: $(python-sdks-folder)/loganalytics/azure-mgmt-loganalytics
 ```
-
 
 ## Go
 
-These settings apply only when `--go` is specified on the command line.
-
-``` yaml $(go)
-go:
-  license-header: MICROSOFT_APACHE_NO_VERSION
-  namespace: operationalinsights
-  clear-output-folder: true
-```
-
-### Go multi-api
-
-``` yaml $(go) && $(multiapi)
-batch:
-  - tag: package-2015-03
-  - tag: package-2015-11-preview
-```
-
-### Tag: package-2015-03 and go
-
-These settings apply only when `--tag=package-2015-03 --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
-
-``` yaml $(tag) == 'package-2015-03' && $(go)
-output-folder: $(go-sdk-folder)/services/operationalinsights/mgmt/2015-03-20/operationalinsights
-```
-
-### Tag: package-2015-11-preview and go
-
-These settings apply only when `--tag=package-2015-11-preview --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
-
-``` yaml $(tag) == 'package-2015-11-preview' && $(go)
-output-folder: $(go-sdk-folder)/services/operationalinsights/mgmt/2015-11-01-preview/operationalinsights
-```
+See configuration in [readme.go.md](./readme.go.md)
 
 ## Java
 
-These settings apply only when `--java` is specified on the command line.
-Please also specify `--azure-libraries-for-java-folder=<path to the root directory of your azure-libraries-for-java clone>`.
-
-``` yaml $(java)
-java:
-  azure-arm: true
-  fluent: true
-  namespace: com.microsoft.azure.management.operationalinsights
-  license-header: MICROSOFT_MIT_NO_CODEGEN
-  payload-flattening-threshold: 1
-  output-folder: $(azure-libraries-for-java-folder)/azure-mgmt-operationalinsights
-```
+See configuration in [readme.java.md](./readme.java.md)
 
 
 ## Suppression
@@ -172,3 +144,31 @@ directive:
     suppress: R3006  # BodyTopLevelProperties/R3006/RPCViolation
     reason: properties etag defined as eTag in model
 ```
+
+## Multi-API/Profile support for AutoRest v3 generators 
+
+AutoRest V3 generators require the use of `--tag=all-api-versions` to select api files.
+
+This block is updated by an automatic script. Edits may be lost!
+
+``` yaml $(tag) == 'all-api-versions' /* autogenerated */
+# include the azure profile definitions from the standard location
+require: $(this-folder)/../../../profiles/readme.md
+
+# all the input files across all versions
+input-file:
+  - $(this-folder)/Microsoft.OperationalInsights/preview/2015-11-01-preview/OperationalInsights.json
+  - $(this-folder)/Microsoft.OperationalInsights/stable/2015-03-20/OperationalInsights.json
+  - $(this-folder)/Microsoft.OperationalInsights/preview/2019-08-01-preview/Clusters.json
+  - $(this-folder)/Microsoft.OperationalInsights/preview/2019-08-01-preview/OperationalInsights.json
+
+```
+
+If there are files that should not be in the `all-api-versions` set, 
+uncomment the  `exclude-file` section below and add the file paths.
+
+``` yaml $(tag) == 'all-api-versions'
+#exclude-file: 
+#  - $(this-folder)/Microsoft.Example/stable/2010-01-01/somefile.json
+```
+
