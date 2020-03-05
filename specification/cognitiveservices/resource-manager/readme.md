@@ -1,5 +1,5 @@
 # CognitiveServices
-    
+
 > see https://aka.ms/autorest
 
 This is the AutoRest configuration file for CognitiveServices.
@@ -8,7 +8,7 @@ This is the AutoRest configuration file for CognitiveServices.
 Microsoft will use data you send to Bing Search Services or the Translator Speech API to improve Microsoft products and services. Where you send personal data to these Cognitive Services, you are responsible for obtaining sufficient consent from the data subjects. The General Privacy and Security Terms in the Online Services Terms do not apply to these Cognitive Services. Please refer to the Microsoft Cognitive Services section in the [Online Services Terms](https://www.microsoft.com/en-us/Licensing/product-licensing/products.aspx) for details. Microsoft offers policy controls that may be used to [disable new Cognitive Services deployments](https://docs.microsoft.com/en-us/azure/cognitive-services/cognitive-services-apis-create-account).
 
 ---
-## Getting Started 
+## Getting Started
 To build the SDK for CognitiveServices, simply [Install AutoRest](https://aka.ms/autorest/install) and in this folder, run:
 
 > `autorest`
@@ -22,7 +22,7 @@ To see additional help and options, run:
 
 
 
-### Basic Information 
+### Basic Information
 These are the global settings for the CognitiveServices API.
 
 ``` yaml
@@ -39,7 +39,7 @@ These settings apply only when `--tag=package-2017-04` is specified on the comma
 input-file:
 - Microsoft.CognitiveServices/stable/2017-04-18/cognitiveservices.json
 ```
- 
+
 ### Tag: package-2016-02-preview
 
 These settings apply only when `--tag=package-2016-02-preview` is specified on the command line.
@@ -61,13 +61,19 @@ This is not used by Autorest itself.
 
 ``` yaml $(swagger-to-sdk)
 swagger-to-sdk:
+  - repo: azure-sdk-for-net
   - repo: azure-sdk-for-python
-  - repo: azure-libraries-for-java
+  - repo: azure-sdk-for-java
   - repo: azure-sdk-for-go
+  - repo: azure-sdk-for-js
+  - repo: azure-sdk-for-node
+  - repo: azure-sdk-for-ruby
+    after_scripts:
+      - bundle install && rake arm:regen_all_profiles['azure_mgmt_cognitive_services']
 ```
 
 
-## C# 
+## C#
 
 These settings apply only when `--csharp` is specified on the command line.
 Please also specify `--csharp-sdks-folder=<path to "SDKs" directory of your azure-sdk-for-net clone>`.
@@ -77,76 +83,86 @@ csharp:
   azure-arm: true
   license-header: MICROSOFT_MIT_NO_VERSION
   namespace: Microsoft.Azure.Management.CognitiveServices
-  output-folder: $(csharp-sdks-folder)/CognitiveServices/management/Management.CognitiveServices/Generated
+  output-folder: $(csharp-sdks-folder)/cognitiveservices/Microsoft.Azure.Management.CognitiveServices/src/Generated
   clear-output-folder: true
 ```
-
 
 ## Go
 
-These settings apply only when `--go` is specified on the command line.
+See configuration in [readme.go.md](./readme.go.md)
 
-``` yaml $(go)
-go:
-  license-header: MICROSOFT_APACHE_NO_VERSION
-  namespace: cognitiveservices
-  clear-output-folder: true
+## Java
+
+These settings apply only when `--java` is specified on the command line.
+Please also specify `--azure-libraries-for-java-folder=<path to the root directory of your azure-libraries-for-java clone>`.
+
+``` yaml $(java)
+azure-arm: true
+fluent: true
+namespace: com.microsoft.azure.management.cognitiveservices
+license-header: MICROSOFT_MIT_NO_CODEGEN
+payload-flattening-threshold: 1
+output-folder: $(azure-libraries-for-java-folder)/azure-mgmt-cognitiveservices
 ```
 
-### Go multi-api
+### Java multi-api
 
-``` yaml $(go) && $(multiapi)
+``` yaml $(java) && $(multiapi)
 batch:
   - tag: package-2017-04
   - tag: package-2016-02-preview
 ```
 
-### Tag: package-2017-04 and go
+### Tag: package-2017-04 and java
 
-These settings apply only when `--tag=package-2017-04 --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
+These settings apply only when `--tag=package-2017-04 --java` is specified on the command line.
+Please also specify `--azure-libraries-for-java-folder=<path to the root directory of your azure-sdk-for-java clone>`.
 
-``` yaml $(tag) == 'package-2017-04' && $(go)
-output-folder: $(go-sdk-folder)/services/cognitiveservices/mgmt/2017-04-18/cognitiveservices
-```
-
-### Tag: package-2016-02-preview and go
-
-These settings apply only when `--tag=package-2016-02-preview --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
-
-``` yaml $(tag) == 'package-2016-02-preview' && $(go)
-output-folder: $(go-sdk-folder)/services/cognitiveservices/mgmt/2016-02-01-preview/cognitiveservices
-```
-
-
-## Java
-
-These settings apply only when `--java` is specified on the command line.
-Please also specify `--azure-libraries-for-java-folder=<path to the root directory of your azure-libraries-for-java clone>`.
-
-``` yaml $(java)
+``` yaml $(tag) == 'package-2017-04' && $(java) && $(multiapi)
 java:
-  azure-arm: true
-  fluent: true
-  namespace: com.microsoft.azure.management.advisor
-  license-header: MICROSOFT_MIT_NO_CODEGEN
-  payload-flattening-threshold: 1
-  output-folder: $(azure-libraries-for-java-folder)/azure-mgmt-advisor
+  namespace: com.microsoft.azure.management.cognitiveservices.v2017_04_18
+  output-folder: $(azure-libraries-for-java-folder)/sdk/cognitiveservices/mgmt-v2017_04_18
+regenerate-manager: true
+generate-interface: true
 ```
 
+### Tag: package-2016-02-preview and java
 
-## Java
+These settings apply only when `--tag=package-2016-02-preview --java` is specified on the command line.
+Please also specify `--azure-libraries-for-java-folder=<path to the root directory of your azure-sdk-for-java clone>`.
 
-These settings apply only when `--java` is specified on the command line.
-Please also specify `--azure-libraries-for-java-folder=<path to the root directory of your azure-libraries-for-java clone>`.
-
-``` yaml $(java)
+``` yaml $(tag) == 'package-2016-02-preview' && $(java) && $(multiapi)
 java:
-  azure-arm: true
-  fluent: true
-  namespace: com.microsoft.azure.management.cognitiveservices
-  license-header: MICROSOFT_MIT_NO_CODEGEN
-  payload-flattening-threshold: 1
-  output-folder: $(azure-libraries-for-java-folder)/azure-mgmt-cognitiveservices
+  namespace: com.microsoft.azure.management.cognitiveservices.v2016_02_01_preview
+  output-folder: $(azure-libraries-for-java-folder)/sdk/cognitiveservices/mgmt-v2016_02_01_preview
+regenerate-manager: true
+generate-interface: true
 ```
+
+
+
+## Multi-API/Profile support for AutoRest v3 generators 
+
+AutoRest V3 generators require the use of `--tag=all-api-versions` to select api files.
+
+This block is updated by an automatic script. Edits may be lost!
+
+``` yaml $(tag) == 'all-api-versions' /* autogenerated */
+# include the azure profile definitions from the standard location
+require: $(this-folder)/../../../profiles/readme.md
+
+# all the input files across all versions
+input-file:
+  - $(this-folder)/Microsoft.CognitiveServices/stable/2017-04-18/cognitiveservices.json
+  - $(this-folder)/Microsoft.CognitiveServices/preview/2016-02-01-preview/cognitiveservices.json
+
+```
+
+If there are files that should not be in the `all-api-versions` set, 
+uncomment the  `exclude-file` section below and add the file paths.
+
+``` yaml $(tag) == 'all-api-versions'
+#exclude-file: 
+#  - $(this-folder)/Microsoft.Example/stable/2010-01-01/somefile.json
+```
+

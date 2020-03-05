@@ -24,17 +24,19 @@
         "operationId": "ReplicationLinks_Delete",
         "description": "Deletes a database replication link. Cannot be done during failover.",
         "x-ms-examples": {
-          "Delete a replication link": { "$ref": "./examples/ReplicationLinkDelete.json" }
+          "Delete a replication link": {
+            "$ref": "./examples/ReplicationLinkDelete.json"
+          }
         },
         "parameters": [
           {
-            "$ref": "#/parameters/ApiVersionParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/ApiVersionParameter"
           },
           {
-            "$ref": "#/parameters/SubscriptionIdParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/SubscriptionIdParameter"
           },
           {
-            "$ref": "#/parameters/ResourceGroupParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/ResourceGroupParameter"
           },
           {
             "$ref": "#/parameters/ServerNameParameter"
@@ -70,17 +72,19 @@
         "operationId": "ReplicationLinks_Get",
         "description": "Gets a database replication link.",
         "x-ms-examples": {
-          "Get a replication link": { "$ref": "./examples/ReplicationLinkGet.json" }
+          "Get a replication link": {
+            "$ref": "./examples/ReplicationLinkGet.json"
+          }
         },
         "parameters": [
           {
-            "$ref": "#/parameters/ApiVersionParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/ApiVersionParameter"
           },
           {
-            "$ref": "#/parameters/SubscriptionIdParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/SubscriptionIdParameter"
           },
           {
-            "$ref": "#/parameters/ResourceGroupParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/ResourceGroupParameter"
           },
           {
             "$ref": "#/parameters/ServerNameParameter"
@@ -118,17 +122,19 @@
         "operationId": "ReplicationLinks_Failover",
         "description": "Sets which replica database is primary by failing over from the current primary replica database.",
         "x-ms-examples": {
-          "Failover a replication link": { "$ref": "./examples/ReplicationLinkFailover.json" }
+          "Failover a replication link": {
+            "$ref": "./examples/ReplicationLinkFailover.json"
+          }
         },
         "parameters": [
           {
-            "$ref": "#/parameters/ApiVersionParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/ApiVersionParameter"
           },
           {
-            "$ref": "#/parameters/SubscriptionIdParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/SubscriptionIdParameter"
           },
           {
-            "$ref": "#/parameters/ResourceGroupParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/ResourceGroupParameter"
           },
           {
             "$ref": "#/parameters/ServerNameParameter"
@@ -167,17 +173,19 @@
         "operationId": "ReplicationLinks_FailoverAllowDataLoss",
         "description": "Sets which replica database is primary by failing over from the current primary replica database. This operation might result in data loss.",
         "x-ms-examples": {
-          "Failover a replication link": { "$ref": "./examples/ReplicationLinkFailover.json" }
+          "Failover a replication link": {
+            "$ref": "./examples/ReplicationLinkFailover.json"
+          }
         },
         "parameters": [
           {
-            "$ref": "#/parameters/ApiVersionParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/ApiVersionParameter"
           },
           {
-            "$ref": "#/parameters/SubscriptionIdParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/SubscriptionIdParameter"
           },
           {
-            "$ref": "#/parameters/ResourceGroupParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/ResourceGroupParameter"
           },
           {
             "$ref": "#/parameters/ServerNameParameter"
@@ -216,17 +224,19 @@
         "operationId": "ReplicationLinks_ListByDatabase",
         "description": "Lists a database's replication links.",
         "x-ms-examples": {
-          "List Replication links": { "$ref": "./examples/ReplicationLinkList.json" }
+          "List Replication links": {
+            "$ref": "./examples/ReplicationLinkList.json"
+          }
         },
         "parameters": [
           {
-            "$ref": "#/parameters/ApiVersionParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/ApiVersionParameter"
           },
           {
-            "$ref": "#/parameters/SubscriptionIdParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/SubscriptionIdParameter"
           },
           {
-            "$ref": "#/parameters/ResourceGroupParameter"
+            "$ref": "../../../common/v1/types.json#/parameters/ResourceGroupParameter"
           },
           {
             "$ref": "#/parameters/ServerNameParameter"
@@ -254,35 +264,6 @@
     }
   },
   "definitions": {
-    "Resource":{
-      "description":"ARM resource.",
-      "properties":{
-        "id":{
-          "readOnly":true,
-          "type":"string",
-          "description":"Resource ID."
-        },
-        "name":{
-          "readOnly":true,
-          "type":"string",
-          "description":"Resource name."
-        },
-        "type":{
-          "readOnly":true,
-          "type":"string",
-          "description":"Resource type."
-        }
-      },
-      "x-ms-azure-resource": true
-    },
-    "ProxyResource":{
-      "description":"ARM proxy resource.",
-      "allOf":[
-        {
-          "$ref":"#/definitions/Resource"
-        }
-      ]
-    },
     "ReplicationLinkProperties": {
       "properties": {
         "isTerminationAllowed": {
@@ -390,7 +371,7 @@
       },
       "allOf": [
         {
-          "$ref": "#/definitions/ProxyResource"
+          "$ref": "../../../common/v1/types.json#/definitions/ProxyResource"
         }
       ],
       "description": "Represents a database replication link."
@@ -409,28 +390,6 @@
     }
   },
   "parameters": {
-    "SubscriptionIdParameter": {
-      "name": "subscriptionId",
-      "in": "path",
-      "required": true,
-      "type": "string",
-      "description": "The subscription ID that identifies an Azure subscription."
-    },
-    "ApiVersionParameter": {
-      "name": "api-version",
-      "in": "query",
-      "required": true,
-      "type": "string",
-      "description": "The API version to use for the request."
-    },
-    "ResourceGroupParameter": {
-      "name": "resourceGroupName",
-      "in": "path",
-      "required": true,
-      "type": "string",
-      "description": "The name of the resource group that contains the resource. You can obtain this value from the Azure Resource Manager API or the portal.",
-      "x-ms-parameter-location": "method"
-    },
     "ServerNameParameter": {
       "name": "serverName",
       "in": "path",

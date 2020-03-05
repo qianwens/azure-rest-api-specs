@@ -1,14 +1,14 @@
-# ServiceFabricClient
-    
+# ServiceFabric
+
 > see https://aka.ms/autorest
 
-This is the AutoRest configuration file for ServiceFabricClient.
+This is the AutoRest configuration file for Service Fabric.
 
 
 
 ---
-## Getting Started 
-To build the SDK for ServiceFabricClient, simply [Install AutoRest](https://aka.ms/autorest/install) and in this folder, run:
+## Getting Started
+To build the SDK for ServiceFabricManagementClient, simply [Install AutoRest](https://aka.ms/autorest/install) and in this folder, run:
 
 > `autorest`
 
@@ -21,22 +21,82 @@ To see additional help and options, run:
 
 
 
-### Basic Information 
-These are the global settings for the ServiceFabricClient API.
+### Basic Information
+These are the global settings for the ServiceFabricManagementClient API.
 
 ``` yaml
+title: ServiceFabricManagementClient
+description: Service Fabric Management Client
 openapi-type: arm
-tag: package-2017-07
+tag: package-2019-06-preview
+
+directive:
+  - suppress: ListInOperationName
+    reason: Modifying the operation names would break the backwards compatibility of the API.
+  - suppress: LongRunningResponseStatusCode
+    reason: The validation tools do not properly recognize 202 as a supported response code.
+  - suppress: SummaryAndDescriptionMustNotBeSame
+    reason: There are a lot of APIs with missing summary content. While it is being worked on disabling this to ensure that we catch and fix other violations.
+  - suppress: TrackedResourceListByImmediateParent
+    reason: Proxy resources are not properly evaluated by the validation toolset.
+  - suppress: DefinitionsPropertiesNamesCamelCase
+    reason: Modifying the operation names would break the backwards compatibility of the API.
+  - suppress: EnumInsteadOfBoolean
+    reason: The boolean properties are actually boolean value in the Service Fabric's application model.
+  - suppress: TrackedResourceGetOperation
+    reason: Proxy resources are not properly evaluated by the validation toolset.
+  - suppress: TrackedResourcePatchOperation
+    reason: Proxy resources are not properly evaluated by the validation toolset.
+  - suppress: TrackedResourceListByResourceGroup
+    reason: Proxy resources are not properly evaluated by the validation toolset.
+  - suppress: TrackedResourceListBySubscription
+    reason: Proxy resources are not properly evaluated by the validation toolset.
+  - suppress: DescriptionAndTitleMissing
+    reason: There are a lot of APIs with missing titles. While it is being worked on disabling this to ensure that we catch and fix other violations.
+  - suppress: Example Validations
+    reason: There are open issues (bugs) in the validator affecting some of the examples and since there is no way to selectively disable the validation for a particular example or paths, all of the example validation is being turned off.
+  - suppress: Example Validations
+    reason: There are open issues (bugs) in the validator affecting some of the examples and since there is no way to selectively disable the validation for a particular example or paths, all of the example validation is being turned off.
+
+```
+### Tag: package-2019-06-preview
+
+These settings apply only when `--tag=package-2019-06-preview` is specified on the command line.
+
+``` yaml $(tag) == 'package-2019-06-preview'
+input-file:
+- Microsoft.ServiceFabric/preview/2019-06-01-preview/cluster.json
+- Microsoft.ServiceFabric/preview/2019-06-01-preview/application.json
 ```
 
+### Tag: package-2019-03
 
-### Tag: package-2016-09
+These settings apply only when `--tag=package-2019-03` is specified on the command line.
 
-These settings apply only when `--tag=package-2016-09` is specified on the command line.
-
-``` yaml $(tag) == 'package-2016-09'
+``` yaml $(tag) == 'package-2019-03'
 input-file:
-- Microsoft.ServiceFabric/stable/2016-09-01/servicefabric.json
+- Microsoft.ServiceFabric/stable/2019-03-01/cluster.json
+- Microsoft.ServiceFabric/stable/2019-03-01/application.json
+```
+
+### Tag: package-2019-03-preview
+
+These settings apply only when `--tag=package-2019-03-preview` is specified on the command line.
+
+``` yaml $(tag) == 'package-2019-03-preview'
+input-file:
+- Microsoft.ServiceFabric/preview/2019-03-01-preview/cluster.json
+- Microsoft.ServiceFabric/preview/2019-03-01-preview/application.json
+```
+
+### Tag: package-2018-02
+
+These settings apply only when `--tag=package-2018-02` is specified on the command line.
+
+``` yaml $(tag) == 'package-2018-02'
+input-file:
+- Microsoft.ServiceFabric/stable/2018-02-01/cluster.json
+- Microsoft.ServiceFabric/preview/2017-07-01-preview/application.json
 ```
 
 ### Tag: package-2017-07
@@ -48,6 +108,23 @@ input-file:
 - Microsoft.ServiceFabric/preview/2017-07-01-preview/servicefabric.json
 ```
 
+### Tag: package-2016-09
+
+These settings apply only when `--tag=package-2016-09` is specified on the command line.
+
+``` yaml $(tag) == 'package-2016-09'
+input-file:
+- Microsoft.ServiceFabric/stable/2016-09-01/servicefabric.json
+```
+
+### Tag: package-2018-02-only
+
+These settings apply only when `--tag=package-2018-02-only` is specified on the command line.
+
+``` yaml $(tag) == 'package-2018-02-only'
+input-file:
+- Microsoft.ServiceFabric/stable/2018-02-01/cluster.json
+```
 
 ---
 # Code Generation
@@ -60,13 +137,18 @@ This is not used by Autorest itself.
 
 ``` yaml $(swagger-to-sdk)
 swagger-to-sdk:
+  - repo: azure-sdk-for-net
   - repo: azure-sdk-for-python
-  - repo: azure-libraries-for-java
+  - repo: azure-sdk-for-java
   - repo: azure-sdk-for-go
+  - repo: azure-sdk-for-node
+  - repo: azure-sdk-for-ruby
+    after_scripts:
+      - bundle install && rake arm:regen_all_profiles['azure_mgmt_service_fabric']
 ```
 
 
-## C# 
+## C#
 
 These settings apply only when `--csharp` is specified on the command line.
 Please also specify `--csharp-sdks-folder=<path to "SDKs" directory of your azure-sdk-for-net clone>`.
@@ -76,88 +158,50 @@ csharp:
   azure-arm: true
   license-header: MICROSOFT_MIT_NO_VERSION
   namespace: Microsoft.Azure.Management.ServiceFabric
-  output-folder: $(csharp-sdks-folder)/ServiceFabric/Management.ServiceFabric/Generated
+  payload-flattening-threshold: 1
+  output-folder: $(csharp-sdks-folder)/servicefabric/Microsoft.Azure.Management.ServiceFabric/src/Generated
   clear-output-folder: true
 ```
-
-## Python
-
-These settings apply only when `--python` is specified on the command line.
-Please also specify `--python-sdks-folder=<path to the root directory of your azure-sdk-for-python clone>`.
-Use `--python-mode=update` if you already have a setup.py and just want to update the code itself.
-
-``` yaml $(python)
-python-mode: create
-python:
-  azure-arm: true
-  license-header: MICROSOFT_MIT_NO_VERSION
-  payload-flattening-threshold: 2
-  namespace: azure.mgmt.servicefabric
-  package-name: azure-mgmt-servicefabric
-  clear-output-folder: true
-```
-``` yaml $(python) && $(python-mode) == 'update'
-python:
-  no-namespace-folders: true
-  output-folder: $(python-sdks-folder)/azure-mgmt-servicefabric/azure/mgmt/servicefabric
-```
-``` yaml $(python) && $(python-mode) == 'create'
-python:
-  basic-setup-py: true
-  output-folder: $(python-sdks-folder)/azure-mgmt-servicefabric
-```
-
 
 
 ## Go
 
-These settings apply only when `--go` is specified on the command line.
-
-``` yaml $(go)
-go:
-  license-header: MICROSOFT_APACHE_NO_VERSION
-  namespace: servicefabric
-  clear-output-folder: true
-```
-
-### Go multi-api
-
-``` yaml $(go) && $(multiapi)
-batch:
-  - tag: package-2016-09
-  - tag: package-2017-07
-```
-
-### Tag: package-2016-09 and go
-
-These settings apply only when `--tag=package-2016-09 --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
-
-``` yaml $(tag) == 'package-2016-09' && $(go)
-output-folder: $(go-sdk-folder)/services/servicefabric/mgmt/2016-09-01/servicefabric
-```
-
-### Tag: package-2017-07 and go
-
-These settings apply only when `--tag=package-2017-07 --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
-
-``` yaml $(tag) == 'package-2017-07' && $(go)
-output-folder: $(go-sdk-folder)/services/servicefabric/mgmt/2017-07-01-preview/servicefabric
-```
-
+See configuration in [readme.go.md](./readme.go.md)
 
 ## Java
 
-These settings apply only when `--java` is specified on the command line.
-Please also specify `--azure-libraries-for-java-folder=<path to the root directory of your azure-libraries-for-java clone>`.
+See configuration in [readme.java.md](./readme.java.md)
 
-``` yaml $(java)
-java:
-  azure-arm: true
-  fluent: true
-  namespace: com.microsoft.azure.management.servicefabric
-  license-header: MICROSOFT_MIT_NO_CODEGEN
-  payload-flattening-threshold: 1
-  output-folder: $(azure-libraries-for-java-folder)/azure-mgmt-servicefabric
+## Multi-API/Profile support for AutoRest v3 generators 
+
+AutoRest V3 generators require the use of `--tag=all-api-versions` to select api files.
+
+This block is updated by an automatic script. Edits may be lost!
+
+``` yaml $(tag) == 'all-api-versions' /* autogenerated */
+# include the azure profile definitions from the standard location
+require: $(this-folder)/../../../profiles/readme.md
+
+# all the input files across all versions
+input-file:
+  - $(this-folder)/Microsoft.ServiceFabric/preview/2019-06-01-preview/cluster.json
+  - $(this-folder)/Microsoft.ServiceFabric/preview/2019-06-01-preview/application.json
+  - $(this-folder)/Microsoft.ServiceFabric/stable/2019-03-01/cluster.json
+  - $(this-folder)/Microsoft.ServiceFabric/stable/2019-03-01/application.json
+  - $(this-folder)/Microsoft.ServiceFabric/preview/2019-03-01-preview/cluster.json
+  - $(this-folder)/Microsoft.ServiceFabric/preview/2019-03-01-preview/application.json
+  - $(this-folder)/Microsoft.ServiceFabric/stable/2018-02-01/cluster.json
+  - $(this-folder)/Microsoft.ServiceFabric/preview/2017-07-01-preview/application.json
+  - $(this-folder)/Microsoft.ServiceFabric/preview/2017-07-01-preview/servicefabric.json
+  - $(this-folder)/Microsoft.ServiceFabric/stable/2016-09-01/servicefabric.json
+
 ```
+
+If there are files that should not be in the `all-api-versions` set, 
+uncomment the  `exclude-file` section below and add the file paths.
+
+``` yaml $(tag) == 'all-api-versions'
+#exclude-file: 
+#  - $(this-folder)/Microsoft.Example/stable/2010-01-01/somefile.json
+```
+

@@ -27,7 +27,16 @@ These are the global settings for the Data Factory V2 API.
 title: DataFactoryManagementClient
 description: The Azure Data Factory V2 management API provides a RESTful set of web services that interact with Azure Data Factory V2 services.
 openapi-type: arm
-tag: package-2017-09-preview
+tag: package-2018-06
+```
+
+### Tag: package-2018-06
+
+These settings apply only when `--tag=package-2018-06` is specified on the command line.
+
+``` yaml $(tag) == 'package-2018-06'
+input-file:
+- Microsoft.DataFactory/stable/2018-06-01/datafactory.json
 ```
 
 ### Tag: package-2017-09-preview
@@ -50,9 +59,12 @@ This is not used by Autorest itself.
 
 ``` yaml $(swagger-to-sdk)
 swagger-to-sdk:
+  - repo: azure-sdk-for-net
   - repo: azure-sdk-for-python
-  - repo: azure-libraries-for-java
+  - repo: azure-sdk-for-java
   - repo: azure-sdk-for-go
+  - repo: azure-sdk-for-js
+  - repo: azure-sdk-for-node
 ```
 
 
@@ -66,7 +78,7 @@ csharp:
   azure-arm: true
   license-header: MICROSOFT_MIT_NO_VERSION
   namespace: Microsoft.Azure.Management.DataFactory
-  output-folder: $(csharp-sdks-folder)/DataFactory/Management.DataFactory/Generated
+  output-folder: $(csharp-sdks-folder)/datafactory/Microsoft.Azure.Management.DataFactory/src/Generated
   clear-output-folder: true
 ```
 
@@ -83,77 +95,42 @@ python:
   license-header: MICROSOFT_MIT_NO_VERSION
   payload-flattening-threshold: 2
   namespace: azure.mgmt.datafactory
-  package-name: azure-mgmt-dafactory
+  package-name: azure-mgmt-datafactory
+  package-version: 1.0.0
   clear-output-folder: true
 ```
 ``` yaml $(python) && $(python-mode) == 'update'
 python:
   no-namespace-folders: true
-  output-folder: $(python-sdks-folder)/azure-mgmt-datafactory/azure/mgmt/datafactory
+  output-folder: $(python-sdks-folder)/datafactory/azure-mgmt-datafactory/azure/mgmt/datafactory
 ```
 ``` yaml $(python) && $(python-mode) == 'create'
 python:
   basic-setup-py: true
-  output-folder: $(python-sdks-folder)/azure-mgmt-datafactory
+  output-folder: $(python-sdks-folder)/datafactory/azure-mgmt-datafactory
 ```
-
 
 ## Go
 
-These settings apply only when `--go` is specified on the command line.
-
-``` yaml $(go)
-go:
-  license-header: MICROSOFT_APACHE_NO_VERSION
-  namespace: datafactory
-  clear-output-folder: true
-```
-
-### Go multi-api
-
-``` yaml $(go) && $(multiapi)
-batch:
-  - tag: package-2017-09-preview
-```
-
-### Tag: package-2017-09-preview and go
-
-These settings apply only when `--tag=package-2017-09-preview --go` is specified on the command line.
-Please also specify `--go-sdk-folder=<path to the root directory of your azure-sdk-for-go clone>`.
-
-``` yaml $(tag) == 'package-2017-09-preview' && $(go)
-output-folder: $(go-sdk-folder)/services/datafactory/mgmt/2017-09-01-preview/datafactory
-```
-
+See configuration in [readme.go.md](./readme.go.md)
 
 ## Java
 
-These settings apply only when `--java` is specified on the command line.
-Please also specify `--azure-libraries-for-java-folder=<path to the root directory of your azure-libraries-for-java clone>`.
+See configuration in [readme.java.md](./readme.java.md)
 
-``` yaml $(java)
-java:
-  azure-arm: true
-  fluent: true
-  namespace: com.microsoft.azure.management.datafactory
-  license-header: MICROSOFT_MIT_NO_CODEGEN
-  payload-flattening-threshold: 1
-  output-folder: $(azure-libraries-for-java-folder)/azure-mgmt-datafactory
-```
-
-# Validation
 
 ## Suppression
 
 ``` yaml
 directive:
   - suppress: R2001  # AvoidNestedProperties
-    where: 
+    where:
       - $.definitions.IntegrationRuntimeResource.properties.properties
       - $.definitions.IntegrationRuntimeStatusResponse.properties.properties
       - $.definitions.TriggerResource.properties.properties
       - $.definitions.LinkedServiceResource.properties.properties
       - $.definitions.TriggerRun.properties.properties
+      - $.definitions.DatasetResource.properties.properties
       - $.properties.properties.LinkedServiceResource.definitions
       - $.properties.properties.LinkedServiceResource.definitions
       - $.properties.properties.IntegrationRuntimeStatusResponse.definitions
@@ -163,11 +140,11 @@ directive:
       - $.properties.properties.TriggerResource.definitions
       - $.properties.properties.TriggerResource.definitions
     from: datafactory.json
-    reason: 
+    reason:
       - Flattening does not work well with polymorphic models.
-      - TriggerResource.properties is an arbitary dictionary and cannot be flattened.
+      - TriggerResource.properties is an arbitrary dictionary and cannot be flattened.
   - suppress: R2018  # XmsEnumValidation
-    where: 
+    where:
       - $.definitions.Expression.properties.type
       - $.definitions.SecureString.properties.type
       - $.definitions.SecureString.properties.type
@@ -181,25 +158,89 @@ directive:
     from: datafactory.json
     reason: Single-value enums are expressed to force the values to be used for de/serialization but should not be exposed or settable by the a client.
   - suppress: R3017  # GuidUsage
-    where: 
+    where:
       - $.definitions.FactoryIdentity.properties.principalId
-    from: datafactory.json
-    reason: 
-      - FactoryIdentity.properties.principalId should be a Guid, per MSI integration.
-  - suppress: R3010  # TrackedResourceListByImmediateParent
-    where: 
-      - $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelineruns/{runId}"]
+      - $.definitions.FactoryIdentity.properties.tenantId
     from: datafactory.json
     reason:
-      - Pipeline runs are listable in all but name. The operations PipelineRuns_QueryByFactory serves this purpose.
+      - FactoryIdentity.properties.principalId should be a Guid, per MSI integration.
+      - FactoryIdentity.properties.tenantId should be a Guid, per MSI integration.
+  - suppress: R3010  # TrackedResourceListByImmediateParent
+    where:
+      - $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelineruns/{runId}"]
+    reason:
+      - Pipeline runs are not listable. The operation PipelineRuns_QueryByFactory serves this purpose.
   - suppress: R1003  # ListInOperationName
-    where: 
+    where:
       - $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/monitoringData"].post.operationId
       - $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/monitoringData"].post.operationId
       - $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelineruns"].post.operationId
       - $.operationId.post["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelineruns"].paths
-      - $.operationId.post["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelineruns"].paths
+      - $.operationId.post["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/queryTriggerRuns"].paths
+      - $.operationId.post["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/queryPipelineRuns"].paths
+      - $.operationId.post["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelineruns/{runId}/queryActivityruns"].paths
+      - $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/queryPipelineRuns"].post.operationId
+      - $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelineruns/{runId}/queryActivityruns"].post.operationId
+      - $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/queryTriggerRuns"].post.operationId
     from: datafactory.json
     reason:
-      - PipelineRuns_QueryByFactory is by-design not a true list API; getting pipeline runs requires providing a filter that is part of the request body in a POST call.
+      - QueryBy API-s are by-design not true list API-s; getting runs requires providing a filter that is part of the request body in a POST call.
+  - suppress: R2066  # PostOperationIdContainsUrlVerb
+    where:
+      - $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelineruns"].post.operationId
+      - $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/queryPipelineRuns"].post.operationId
+      - $.operationId.post["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/queryPipelineRuns"].paths
+      - $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelineruns/{runId}/queryActivityruns"].post.operationId
+      - $.operationId.post["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelineruns/{runId}/queryActivityruns"].paths
+      - $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/queryTriggerRuns"].post.operationId
+      - $.operationId.post["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/queryTriggerRuns"].paths
+      - $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/cancelpipelinerun/{runId}"].post.operationId
+    from: datafactory.json
+    reason:
+      - PipelineRuns_QueryByFactory is placed in pipeline runs namespace fpr better user experience. The method name shows the scope.
+      - ActivityRuns_QueryByPipelineRun is placed in activity runs namespace fpr better user experience. The method name shows the scope.
+      - CancelPipelineRun API is fixed in our new API version
+  - suppress: R3018  # EnumInsteadOfBoolean
+    where:
+      - $.definitions.OperationMetricDimension.properties.toBeExportedForShoebox
+      - $.definitions.ActivityPolicy.properties.secureOutput
+      - $.definitions.SSISPropertyOverride.properties.isSensitive
+      - $.definitions.ForEachActivityTypeProperties.properties.isSequential
+      - $.definitions.ExecutePipelineActivityTypeProperties.properties.waitOnCompletion
+      - $.definitions.SelfHostedIntegrationRuntimeNode.properties.isActiveDispatcher
+      - $.definitions.IntegrationRuntimeConnectionInfo.properties.isIdentityCertExprired
+    reason:
+      - toBeExportedForShoebox is property we send to Azure Monitor which requires the boolean type
+      - The other properties are simple and self explanatory
+  - suppress: OAV131  # EnumInsteadOfBoolean
+    where:
+      - $(this-folder)/Microsoft.DataFactory/stable/2018-06-01/entityTypes/LinkedService.json
+    reason:
+      - DataFlow add type required  
 ```
+
+## Multi-API/Profile support for AutoRest v3 generators 
+
+AutoRest V3 generators require the use of `--tag=all-api-versions` to select api files.
+
+This block is updated by an automatic script. Edits may be lost!
+
+``` yaml $(tag) == 'all-api-versions' /* autogenerated */
+# include the azure profile definitions from the standard location
+require: $(this-folder)/../../../profiles/readme.md
+
+# all the input files across all versions
+input-file:
+  - $(this-folder)/Microsoft.DataFactory/stable/2018-06-01/datafactory.json
+  - $(this-folder)/Microsoft.DataFactory/preview/2017-09-01-preview/datafactory.json
+
+```
+
+If there are files that should not be in the `all-api-versions` set, 
+uncomment the  `exclude-file` section below and add the file paths.
+
+``` yaml $(tag) == 'all-api-versions'
+#exclude-file: 
+#  - $(this-folder)/Microsoft.Example/stable/2010-01-01/somefile.json
+```
+
